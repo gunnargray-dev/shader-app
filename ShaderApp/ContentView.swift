@@ -1,24 +1,42 @@
-//
-//  ContentView.swift
-//  ShaderApp
-//
-//  Created by Gunnar Gray on 7/1/25.
-//
-
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var settings = GridSettings()
+    @State private var showingSettings = false
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        ZStack {
+            Color.black.ignoresSafeArea()
+            
+            DotGridView(
+                settings: settings,
+                ripplePoints: []
+            )
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { value in
+                        let startLocation = value.startLocation
+                        let translation = value.translation
+                        
+                        // Detect upward swipe
+                        if translation.height < -50 && abs(translation.width) < 100 {
+                            showingSettings = true
+                        }
+                    }
+            )
         }
-        .padding()
+        .sheet(isPresented: $showingSettings) {
+            SettingsSheet(settings: settings)
+                .presentationDetents([.height(480)])
+                .presentationDragIndicator(.visible)
+                .presentationCornerRadius(36)
+                .presentationBackground(.clear)
+        }
     }
+
 }
 
 #Preview {
     ContentView()
+        .preferredColorScheme(.dark)
 }

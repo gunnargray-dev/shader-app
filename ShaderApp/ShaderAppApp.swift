@@ -1,17 +1,11 @@
-//
-//  ShaderAppApp.swift
-//  ShaderApp
-//
-//  Created by Gunnar Gray on 7/1/25.
-//
-
 import SwiftUI
 
 @main
-struct ShaderAppApp: App {
+struct DotGridApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .preferredColorScheme(.dark)
         }
     }
 }
