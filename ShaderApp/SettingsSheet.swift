@@ -5,67 +5,70 @@ struct SettingsSheet: View {
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
-        VStack(spacing: 24) {
-            // Header
-            VStack(spacing: 32) {
+        GeometryReader { geometry in
+            VStack(spacing: 0) {
+                // Custom drag indicator
                 RoundedRectangle(cornerRadius: 2)
                     .fill(.secondary)
                     .frame(width: 36, height: 4)
-                    .padding(.top, 24)
+                    .padding(.top, 12)
+                    .padding(.bottom, 16)
                 
-                Text("Pattern Settings")
-                    .font(.title2.weight(.semibold))
-                    .foregroundColor(.primary)
-            }
-            
-            // Pattern Selection
-            VStack(alignment: .leading, spacing: 12) {
-                Text("Pattern")
-                    .font(.headline)
-                    .foregroundColor(.secondary)
-                
-                HStack(spacing: 12) {
-                    ForEach(GridSettings.PatternType.allCases, id: \.self) { pattern in
-                        Button(pattern.rawValue) {
-                            settings.updatePattern(pattern)
+                // Pattern Selection - Always visible
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Pattern")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal, 24)
+                    
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(GridSettings.PatternType.allCases, id: \.self) { pattern in
+                                Button(pattern.rawValue) {
+                                    settings.updatePattern(pattern)
+                                }
+                                .buttonStyle(PatternButtonStyle(isSelected: settings.selectedPattern == pattern))
+                            }
                         }
-                        .buttonStyle(PatternButtonStyle(isSelected: settings.selectedPattern == pattern))
+                        .padding(.horizontal, 24)
                     }
                 }
+                
+                // Full controls - Only show when there's enough space
+                if geometry.size.height > 200 {
+                    VStack(spacing: 20) {
+                        SliderRow(
+                            title: "Density",
+                            value: $settings.density,
+                            range: 0.2...1.0
+                        )
+                        
+                        SliderRow(
+                            title: "Dot Size",
+                            value: $settings.dotSize,
+                            range: 0.1...1.0
+                        )
+                        
+                        SliderRow(
+                            title: "Speed",
+                            value: $settings.speed,
+                            range: 0.1...2.0
+                        )
+                        
+                        ColorControlRow(
+                            title: "Color",
+                            hue: $settings.colorHue,
+                            isEnabled: $settings.colorEnabled
+                        )
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.top, 24)
+                    
+                    Spacer(minLength: 20)
+                }
             }
-            
-            // Sliders
-            VStack(spacing: 20) {
-                SliderRow(
-                    title: "Density",
-                    value: $settings.density,
-                    range: 0.2...1.0
-                )
-                
-                SliderRow(
-                    title: "Dot Size",
-                    value: $settings.dotSize,
-                    range: 0.1...1.0
-                )
-                
-                SliderRow(
-                    title: "Speed",
-                    value: $settings.speed,
-                    range: 0.1...2.0
-                )
-                
-                ColorControlRow(
-                    title: "Color",
-                    hue: $settings.colorHue,
-                    isEnabled: $settings.colorEnabled
-                )
-            }
-            
-            Spacer(minLength: 20)
+            .padding(.bottom, geometry.safeAreaInsets.bottom > 0 ? 0 : 20)
         }
-        .padding(.horizontal, 24)
-        .padding(.top, 24)
-        .padding(.bottom, 40)
         .background(.ultraThinMaterial)
     }
 }
@@ -75,16 +78,17 @@ struct PatternButtonStyle: ButtonStyle {
     
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.system(.body, design: .rounded, weight: .medium))
+            .font(.system(.callout, design: .rounded, weight: .medium))
             .foregroundColor(isSelected ? .black : .primary)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            .fixedSize() // Prevents compression and ensures proper text sizing
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: 10)
                     .fill(isSelected ? .white : .clear)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: 10)
                     .stroke(.secondary, lineWidth: isSelected ? 0 : 1)
             )
             .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
@@ -127,29 +131,32 @@ struct ColorControlRow: View {
                     .labelsHidden()
             }
             
-            if isEnabled {
-                ZStack {
-                    // Rainbow gradient background
-                    LinearGradient(
-                        colors: [
-                            Color(hue: 0.0, saturation: 1.0, brightness: 1.0),
-                            Color(hue: 0.17, saturation: 1.0, brightness: 1.0),
-                            Color(hue: 0.33, saturation: 1.0, brightness: 1.0),
-                            Color(hue: 0.5, saturation: 1.0, brightness: 1.0),
-                            Color(hue: 0.67, saturation: 1.0, brightness: 1.0),
-                            Color(hue: 0.83, saturation: 1.0, brightness: 1.0),
-                            Color(hue: 1.0, saturation: 1.0, brightness: 1.0)
-                        ],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                    .frame(height: 30)
-                    .clipShape(RoundedRectangle(cornerRadius: 15))
-                    
-                    CustomColorSlider(value: $hue)
-                }
-                .transition(.opacity.combined(with: .scale))
+            // Always reserve space for the slider to prevent layout shifts
+            ZStack {
+                // Rainbow gradient background
+                LinearGradient(
+                    colors: [
+                        Color(hue: 0.0, saturation: 1.0, brightness: 1.0),
+                        Color(hue: 0.17, saturation: 1.0, brightness: 1.0),
+                        Color(hue: 0.33, saturation: 1.0, brightness: 1.0),
+                        Color(hue: 0.5, saturation: 1.0, brightness: 1.0),
+                        Color(hue: 0.67, saturation: 1.0, brightness: 1.0),
+                        Color(hue: 0.83, saturation: 1.0, brightness: 1.0),
+                        Color(hue: 1.0, saturation: 1.0, brightness: 1.0)
+                    ],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+                .frame(height: 30)
+                .clipShape(RoundedRectangle(cornerRadius: 15))
+                .opacity(isEnabled ? 1.0 : 0.3)
+                
+                CustomColorSlider(value: $hue)
+                    .disabled(!isEnabled)
+                    .opacity(isEnabled ? 1.0 : 0.3)
             }
+            .scaleEffect(isEnabled ? 1.0 : 0.95)
+            .animation(.easeInOut(duration: 0.25), value: isEnabled)
         }
         .animation(.easeInOut(duration: 0.3), value: isEnabled)
     }

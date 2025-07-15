@@ -1,6 +1,6 @@
 # ShaderApp 🎨
 
-A mesmerizing SwiftUI iOS application that creates stunning animated dot patterns using Metal shaders and real-time GPU rendering.
+A  SwiftUI iOS app that creates stunning animated dot patterns using Metal shaders and real-time GPU rendering.
 
 [![iOS](https://img.shields.io/badge/iOS-17.6%2B-blue.svg)](https://developer.apple.com/ios/)
 [![Swift](https://img.shields.io/badge/Swift-5.9-orange.svg)](https://swift.org)

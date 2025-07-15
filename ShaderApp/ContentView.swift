@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var settings = GridSettings()
-    @State private var showingSettings = false
+    @State private var showingSettings = true // Always show sheet
     
     var body: some View {
         ZStack {
@@ -12,25 +12,14 @@ struct ContentView: View {
                 settings: settings,
                 ripplePoints: []
             )
-            .gesture(
-                DragGesture(minimumDistance: 0)
-                    .onChanged { value in
-                        let startLocation = value.startLocation
-                        let translation = value.translation
-                        
-                        // Detect upward swipe
-                        if translation.height < -50 && abs(translation.width) < 100 {
-                            showingSettings = true
-                        }
-                    }
-            )
         }
         .sheet(isPresented: $showingSettings) {
             SettingsSheet(settings: settings)
-                .presentationDetents([.height(480)])
-                .presentationDragIndicator(.visible)
+                .presentationDetents([.height(120), .height(450)]) // Reduced height - just enough for color slider at bottom
                 .presentationCornerRadius(36)
                 .presentationBackground(.clear)
+                .presentationDragIndicator(.hidden) // Hide the default drag indicator
+                .interactiveDismissDisabled() // Prevent accidental dismissal
         }
     }
 

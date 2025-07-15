@@ -45,6 +45,10 @@ struct DotGridView: View {
             height: max(size.height, 1.0)
         )
         
+        let bloomIntensity = Float(settings.bloomIntensity)
+        let bloomRadius = Float(settings.bloomRadius)
+        let brightness = Float(settings.brightness)
+        
         switch pattern {
         case .wave:
             return ShaderLibrary.dotGridWave(
@@ -53,7 +57,10 @@ struct DotGridView: View {
                 .float(density),
                 .float(dotSize),
                 .float(colorHue),
-                .float(colorEnabled ? 1.0 : 0.0)
+                .float(colorEnabled ? 1.0 : 0.0),
+                .float(bloomIntensity),
+                .float(bloomRadius),
+                .float(brightness)
             )
         case .pulse:
             return ShaderLibrary.dotGridPulse(
@@ -62,7 +69,10 @@ struct DotGridView: View {
                 .float(density),
                 .float(dotSize),
                 .float(colorHue),
-                .float(colorEnabled ? 1.0 : 0.0)
+                .float(colorEnabled ? 1.0 : 0.0),
+                .float(bloomIntensity),
+                .float(bloomRadius),
+                .float(brightness)
             )
         case .ripple:
             return ShaderLibrary.dotGridRipple(
@@ -71,7 +81,10 @@ struct DotGridView: View {
                 .float(density),
                 .float(dotSize),
                 .float(colorHue),
-                .float(colorEnabled ? 1.0 : 0.0)
+                .float(colorEnabled ? 1.0 : 0.0),
+                .float(bloomIntensity),
+                .float(bloomRadius),
+                .float(brightness)
             )
         case .noise:
             return ShaderLibrary.dotGridNoise(
@@ -80,7 +93,118 @@ struct DotGridView: View {
                 .float(density),
                 .float(dotSize),
                 .float(colorHue),
-                .float(colorEnabled ? 1.0 : 0.0)
+                .float(colorEnabled ? 1.0 : 0.0),
+                .float(bloomIntensity),
+                .float(bloomRadius),
+                .float(brightness)
+            )
+        case .cellular:
+            return ShaderLibrary.dotGridCellular(
+                .float2(safeSize),
+                .float(time),
+                .float(density),
+                .float(dotSize),
+                .float(colorHue),
+                .float(colorEnabled ? 1.0 : 0.0),
+                .float(bloomIntensity),
+                .float(bloomRadius),
+                .float(brightness)
+            )
+        case .flowField:
+            return ShaderLibrary.dotGridFlowField(
+                .float2(safeSize),
+                .float(time),
+                .float(density),
+                .float(dotSize),
+                .float(colorHue),
+                .float(colorEnabled ? 1.0 : 0.0),
+                .float(bloomIntensity),
+                .float(bloomRadius),
+                .float(brightness)
+            )
+        case .gravity:
+            return ShaderLibrary.dotGridGravity(
+                .float2(safeSize),
+                .float(time),
+                .float(density),
+                .float(dotSize),
+                .float(colorHue),
+                .float(colorEnabled ? 1.0 : 0.0),
+                .float(bloomIntensity),
+                .float(bloomRadius),
+                .float(brightness)
+            )
+        case .fractal:
+            return ShaderLibrary.dotGridFractal(
+                .float2(safeSize),
+                .float(time),
+                .float(density),
+                .float(dotSize),
+                .float(colorHue),
+                .float(colorEnabled ? 1.0 : 0.0),
+                .float(bloomIntensity),
+                .float(bloomRadius),
+                .float(brightness)
+            )
+        case .kaleidoscope:
+            return ShaderLibrary.dotGridKaleidoscope(
+                .float2(safeSize),
+                .float(time),
+                .float(density),
+                .float(dotSize),
+                .float(colorHue),
+                .float(colorEnabled ? 1.0 : 0.0),
+                .float(bloomIntensity),
+                .float(bloomRadius),
+                .float(brightness)
+            )
+        case .magnetic:
+            return ShaderLibrary.dotGridMagnetic(
+                .float2(safeSize),
+                .float(time),
+                .float(density),
+                .float(dotSize),
+                .float(colorHue),
+                .float(colorEnabled ? 1.0 : 0.0),
+                .float(bloomIntensity),
+                .float(bloomRadius),
+                .float(brightness)
+            )
+        case .growth:
+            return ShaderLibrary.dotGridGrowth(
+                .float2(safeSize),
+                .float(time),
+                .float(density),
+                .float(dotSize),
+                .float(colorHue),
+                .float(colorEnabled ? 1.0 : 0.0),
+                .float(bloomIntensity),
+                .float(bloomRadius),
+                .float(brightness)
+            )
+        case .tunnel:
+            return ShaderLibrary.dotGridTunnel(
+                .float2(safeSize),
+                .float(time),
+                .float(density),
+                .float(dotSize),
+                .float(colorHue),
+                .float(colorEnabled ? 1.0 : 0.0),
+                .float(bloomIntensity),
+                .float(bloomRadius),
+                .float(brightness)
+            )
+        case .interference:
+            return ShaderLibrary.dotGridInterference(
+                .float2(safeSize),
+                .float(time),
+                .float(density),
+                .float(dotSize),
+                .float(colorHue),
+                .float(colorEnabled ? 1.0 : 0.0),
+                .float(bloomIntensity),
+                .float(bloomRadius),
+                .float(brightness)
             )
         }
     }
